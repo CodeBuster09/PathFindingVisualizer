@@ -23,6 +23,10 @@
     animation-fill-mode: forwards;
     animation-play-state: running;
   }
+
+  .node-weighted{
+    background-color: magenta;
+  }
   
   @keyframes visitedAnimation {
     0% {
