@@ -23,7 +23,8 @@ export default class PathFindingVisualizer extends Component {
     }
 
     handleMouseDown(row, col) {
-        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        let newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        newGrid = getNewGridWithWeightToggled(this.state.grid, row, col);
         this.setState({grid: newGrid, mouseIsPressed: true});
     }
 
@@ -133,6 +134,7 @@ const getInitialGrid = () => {
       distance: Infinity,
       isVisited: false,
       isWall: false,
+      isWeighted: false,
       previousNode: null,
     };
   };
@@ -144,6 +146,18 @@ const getInitialGrid = () => {
       ...node,
       isWall: !node.isWall,
     };
+    newGrid[row][col] = newNode;
+    return newGrid;
+  };
+
+  const getNewGridWithWeightToggled = (grid,row,col) => {
+    const newGrid = grid.slice();
+    const node = newGrid[row][col];
+    const newNode = {
+        ...node,
+        isWeighted: !node.isWeighted,
+    };
+
     newGrid[row][col] = newNode;
     return newGrid;
   };
