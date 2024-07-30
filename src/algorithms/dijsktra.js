@@ -7,6 +7,13 @@ export function dijsktra(grid, startNode, finishNode) {
         sortNodesByDistance(unvisitedNodes);
 
         const closestNode = unvisitedNodes.shift();
+        
+        //When the closest node is a wall, we can't go through
+        if(closestNode.isWall) continue;
+        
+        //When the closest node has dist INFINITY, we can't go through, that means that the startNode is covered
+        //by walls on all sides and can't reach the endNode.
+        if(closestNode.distance === Infinity) return visitedNodesInOrder;
 
         closestNode.isVisited = true;
         visitedNodesInOrder.push(closestNode);
