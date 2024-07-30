@@ -13,7 +13,8 @@ export default class PathFindingVisualizer extends Component {
         super();
         this.state = {
             grid: [],
-            mouseIsPressed: false
+            mouseIsPressed: false,
+            distance: 0
         };
     }
 
@@ -23,8 +24,8 @@ export default class PathFindingVisualizer extends Component {
     }
 
     handleMouseDown(row, col) {
-        let newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        newGrid = getNewGridWithWeightToggled(this.state.grid, row, col);
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        // newGrid = getNewGridWithWeightToggled(this.state.grid, row, col);
         this.setState({grid: newGrid, mouseIsPressed: true});
     }
 
@@ -36,6 +37,11 @@ export default class PathFindingVisualizer extends Component {
 
     handleMouseUp() {
         this.setState({mouseIsPressed: false});
+    }
+
+    handleDoubleClick(row, col) {
+        const newGrid = getNewGridWithWeightToggled(this.state.grid, row, col);
+        this.setState({grid: newGrid});
     }
 
     animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
@@ -73,34 +79,46 @@ export default class PathFindingVisualizer extends Component {
         const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
         console.log(visitedNodesInOrder);
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+        this.setState({distance: nodesInShortestPathOrder.length});
     }
 
     render() {
-        const {grid, mouseIsPressed} = this.state;
+        const {grid, mouseIsPressed, distance} = this.state;
 
         return (
             <>
-            <button onClick={() => this.visualizeDijkstra()}>
-                Visualize Dijsktra Algorithm
-            </button>
+            <div className="flex">
+                <button className="btn" onClick={() => this.visualizeDijkstra()}>
+                    Visualize Dijsktra Algorithm
+                </button>
+                <div className="flex-end">
+                    <div className="legend-mgn">&nbsp;</div><div className="legend">Weight of 15 &nbsp;</div>
+                    <div className="legend-db">&nbsp;</div><div className="legend">Walls &nbsp;</div>
+                    <div className="legend-green">&nbsp;</div><div className="legend">Source &nbsp;</div>
+                    <div className="legend-red">&nbsp;</div><div className="legend">Destination &nbsp;</div>
+                </div>
+            </div>
+            {(distance>0) ? <h1>Number of grid-cells covered in the shortest-path: {distance}</h1> : <div></div>}
             <div className="grid">
                 {grid.map((row,rowIdx) => {
                     
                     return <div key={rowIdx}>
                         {row.map((node,nodeIdx) => {
-                            const {row, col, isEnd, isStart, isWall} = node;
+                            const {row, col, isEnd, isStart, isWall, isWeighted} = node;
                             return <Node
                             key={nodeIdx}
                             col={col}
                             isFinish={isEnd}
                             isStart={isStart}
                             isWall={isWall}
+                            isWeighted={isWeighted}
                             mouseIsPressed={mouseIsPressed}
                             onMouseDown={(row, col) => this.handleMouseDown(row, col)}
                             onMouseEnter={(row, col) =>
                               this.handleMouseEnter(row, col)
                             }
                             onMouseUp={() => this.handleMouseUp()}
+                            onDoubleClick={(row, col) => this.handleDoubleClick(row, col)}
                             row={row}>
                             </Node>
                             })}

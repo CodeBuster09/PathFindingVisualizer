@@ -31,7 +31,9 @@ function updateUnvisitedNeighbours(node, grid) {
     const unvisitedNeighbours = getUnvisitedNeighbours(node,grid);
     for(const neighbor of unvisitedNeighbours) {
         if(node.isWeighted)
-            neighbor.distance = node.distance + 1;
+            neighbor.distance = node.distance + 15;
+        else        
+        neighbor.distance = node.distance + 1;
         neighbor.previousNode = node;
     }
 }

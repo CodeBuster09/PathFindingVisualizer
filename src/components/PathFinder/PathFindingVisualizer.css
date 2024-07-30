@@ -1,3 +1,55 @@
 .grid{
-    margin: 100px 0 0;
+    margin: 0 0 0;
+}
+
+.flex{
+    display: flex;
+    margin: 50px 0 50px 150px;
+}
+
+
+.flex-end{
+    margin: 0 0 0 500px;
+    display: flex;
+}
+
+.legend-mgn{
+    background-color: magenta;
+    width: 20px;
+    height: 20px;
+}
+
+.legend-db{
+    background-color: rgb(12, 53, 71);
+    width: 20px;
+    height: 20px;
+}
+
+.legend-green{
+    background-color: green;
+    width: 20px;
+    height: 20px;
+}
+
+.legend-red{
+    background-color: red;
+    width: 20px;
+    height: 20px;
+}
+
+.btn {
+    background-color: #04AA6D; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  .btn:hover {
+    background-color:#002ead;
+    transition: 0.7s;
+    cursor: pointer;
 }
