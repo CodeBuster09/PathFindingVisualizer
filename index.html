@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Path Finder</title>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/utility.css">
+    
+    </head>
+
+    <body>
+        <div class="template">
+
+            <!-- ================ NAVIGATION BAR ============== -->
+            <header>
+
+                <nav>
+                    <a id="logo" href="./index.html">Pathfinding Visualizer</a>
+
+                    <button id="visualize" class="btn">Visualize</button>
+
+                    <ul class="nav-menu">
+                        <li>
+                            <a id="clear-path" href="#">Clear path</a>
+                        </li>
+                        <li>
+                            <a id="clear-board" href="#">Clear board</a>
+                        </li>
+                        <li>
+                            <a id="generate-maze" href="#">Generate Maze</a>
+                        </li>
+
+                        <li id="pixel" class="drop-box">
+                            <a class="drop-toggle" href="#">Pixel<span class="carret"></span></a>
+                            <ul class="drop-menu">
+                                <li><a href="#">14px</a></li>
+                                <li><a href="#">16px</a></li>
+                                <li><a href="#">18px</a></li>
+                                <li><a href="#">20px</a></li>
+                                <li><a href="#" class="active">22px</a></li>
+                                <li><a href="#">24px</a></li>
+                                <li><a href="#">26px</a></li>
+                            </ul>
+                        </li>
+
+                        <li id="speed" class="drop-box">
+                            <a class="drop-toggle" href="#">Speed<span class="carret"></span></a>
+                            <ul class="drop-menu">
+                                <li><a href="#">Slow</a></li>
+                                <li><a href="#" class="active">Normal</a></li>
+                                <li><a href="#">Fast</a></li>
+                            </ul>
+                        </li>
+
+                        <li id="algo" class="drop-box">
+                            <a class="drop-toggle" href="#">Algorithms <span class="carret"></span></a>
+                            <ul class="drop-menu">
+                                <li><a href="#" class="active">BFS</a></li>
+                                <li><a href="#">Bi-Directional BFS</a></li>
+                                <li><a href="#">DFS</a></li>
+                                <li><a href="#">Dijkstra's Algorithm</a></li>
+                                <li><a href="#">Greedy Best-first Search</a></li>
+                                <li><a href="#">A* Algorithm</a></li>
+                            </ul>
+                        </li>
+
+
+                    </ul>
+
+                </nav>
+                <div class="guide-bar">
+                    
+                </div>
+            </header>
+            <div id="board">
+
+            </div>
+    </div>
+    </body>
+<script src="app.js"></script>
+</html>

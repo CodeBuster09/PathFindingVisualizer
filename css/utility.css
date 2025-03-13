@@ -1,0 +1,6 @@
+.carret {
+    display: block;
+    aspect-ratio: 1;
+    width: 14px;
+    background: url(../assets/icon/caret-down.svg) ;
+}
