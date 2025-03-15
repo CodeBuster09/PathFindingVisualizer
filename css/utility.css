@@ -1,6 +1,59 @@
-.carret {
-    display: block;
+
+:root {
+    --wall-clr : rgb(12, 53, 71);
+    --visited-clr : rgba(0, 190, 218, 0.75);
+    --path-clr : rgb(255, 254, 106);
+    --text-light: #515067;
+}
+
+span.carret{
+    display: inline-block;
     aspect-ratio: 1;
-    width: 14px;
-    background: url(../assets/icon/caret-down.svg) ;
+    width: 12px;
+    /* border: 1px solid; */
+    background: url('../assets/icon/caret-down.svg');
+    background-repeat: no-repeat;
+    margin-left: 4px;
+}
+.wall{
+    background-color: var(--clr-navy);
+    animation: wallAnimation .5s ease-out forwards;
+}
+
+.unvisited {
+    background-color: white;
+    border: 1px solid var(--light-line);
+}
+
+.visited {
+    animation: visitedAnimation 1s ease-out forwards;
+}
+
+.path{
+    animation: pathAnimation 1s ease-out forwards;
+}
+
+.carret{
+    aspect-ratio: 1;
+}
+
+.btn{
+    user-select: none;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background-color: var(--primary-clr);
+    color: white;
+    font-weight: 600;
+    transition: .1s ease-in-out;
+}
+
+.source{
+    background: url(../assets/icon/source.svg);
+}
+.target{
+    background: url(../assets/icon/target.svg);
 }

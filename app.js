@@ -1,26 +1,32 @@
 const board = document.getElementById('board');
 var cells;
+let row,col;
+var matrix = [];
 renderBoard();
 
 function renderBoard(cellWidth = 22) {
     const root = document.documentElement;
     root.style.setProperty('--cell-width',`${cellWidth}px`);
-    let row = Math.floor(board.clientHeight / cellWidth);
-    let col = Math.floor(board.clientWidth / cellWidth);
+    row = Math.floor(board.clientHeight / cellWidth);
+    col = Math.floor(board.clientWidth / cellWidth);
     board.innerHTML = '';
     cells = [];
     for(let i=0;i<row;i++) {
         const rowElement = document.createElement('div');
         rowElement.classList.add('row');
         rowElement.setAttribute('id',`${i}`);
+
+        const rowArr = [];
         for(let j=0;j<col;j++) {
             const colElement = document.createElement('div');
             colElement.classList.add('col');
             colElement.setAttribute('id',`${i}-${j}`);
             cells.push(colElement);    
 
+            rowArr.push(colElement);
             rowElement.appendChild(colElement);
         }
+        matrix.push(rowArr);
         board.appendChild(rowElement);
     }
 }
@@ -87,3 +93,89 @@ document.addEventListener('click',(e)=>{
         removeActive(navOptions,true);
     }
 })
+
+//Board Interaction
+
+function isValid(x, y) {
+    return (x>=0 && y>=0 && x<row && y<col)
+}
+
+function set(className, x, y) {
+    if(isValid(x,y)) {
+        matrix[x][y].classList.add(className);
+    }
+    else {
+        x = Math.floor(Math.random() * row);
+        y = Math.floor(Math.random() * col);
+        matrix[x][y].classList.add(className);
+    }
+    return {x,y};
+} 
+
+let source = set('source');
+let target = set('target');
+
+let isDrawing = false;
+let isDragging = false;
+let dragPoint = null;
+cells.forEach((cell) => {
+
+    const pointerup = ()=>{
+        isDragging = false;
+        isDrawing = false;
+        dragPoint = null;
+    }
+
+    const pointerdown = (e)=> {
+        if(e.target.classList.contains('source')) {
+            isDragging = true;
+            dragPoint = 'source';
+        } else if(e.target.classList.contains('target')) {
+            isDragging = true;
+            dragPoint = 'target';
+        } else {
+            isDrawing = true;
+        }
+    }
+
+    const pointermove = (e)=>{
+        if(isDrawing) {
+            e.target.classList.add('wall');
+        } else if(dragPoint && isDragging){
+
+            cells.forEach((cell) => {
+                cell.classList.remove(`${dragPoint}`);
+            });
+
+            e.target.classList.add(`${dragPoint}`);
+            let coordinate = e.target.id.split('-');
+            if(dragPoint === 'source') {
+                source.x = +coordinate[0];
+                source.y = +coordinate[1];
+            } else {
+                target.x = +coordinate[0];
+                target.y = +coordinate[1];
+            
+            }
+        }
+    }
+
+    cell.addEventListener('pointerup',pointerup);
+    cell.addEventListener('pointerdown',pointerdown);
+    cell.addEventListener('pointermove',pointermove);
+    cell.addEventListener('click', ()=> {
+        cell.classList.toggle('wall');
+    });
+})
+
+const clearPath = ()=> {
+    cells.forEach(cell => {
+        cell.classList.remove('path');
+    })
+}
+
+const clearWall = ()=> {
+    cells.forEach(cell => {
+        cell.classList.remove('wall');
+    })
+}
