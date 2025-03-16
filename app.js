@@ -177,8 +177,6 @@ cells.forEach((cell) => {
 const clearPathBtn = document.getElementById('clear-path');
 const clearBoardBtn = document.getElementById('clear-board');
 
-clearPathBtn.addEventListener('click', clearPath);
-clearBoardBtn.addEventListener('click', clearBoard);
 
 const clearPath = ()=> {
     cells.forEach(cell => {
@@ -201,6 +199,9 @@ const clearWall = ()=> {
     })
 }
 
+
+clearPathBtn.addEventListener('click', clearPath);
+clearBoardBtn.addEventListener('click', clearBoard);
 
 
 
@@ -316,17 +317,48 @@ function generateMaze(rowStart, rowEnd, colStart, colEnd, surroundingWall, orien
 
 }
 
+//Animate algorithm
+function animate(elements, className) {
+    let delay = 10;
+    if(className === 'path') {
+        delay *= 3.5;
+    }
 
-//PATH FINDING ALGROTHMS
+    for (let i=0; i<elements.length; i++) {
+        setTimeout(() => {
+            elements[i].classList.remove('visited');
+            elements[i].classList.add(className);
+     
+            if(i === elements.length-1 && className === 'visited') {
+                animate(pathToAnimate, 'path');
+            }
+        }, delay*i);
+    }
+};
+
+
+// Backtrack to get path from source to target
+function getPath(parent, target) {
+    if(!target) return;
+
+    pathToAnimate.push(matrix[target.x][target.y]);
+ 
+    const p = parent.get(`${target.x}-${target.y}`);
+    getPath(parent,p);
+};
+
+
+
+//PATH FINDING ALGROTHMS............
 
 // 1. BFS
-
 var visitedCell;
 var pathToAnimate;
 visualizeBtn.addEventListener('click', ()=>{
     visitedCell = [];
     pathToAnimate = [];
-    BFS();
+    // BFS();
+    Dijkstra();
     animate(visitedCell, 'visited');
 });
 
@@ -368,31 +400,108 @@ function BFS() {
 };
 
 
-//Animate algorithm
-function animate(elements, className) {
-    let delay = 10;
-    if(className === 'path') {
-        delay *= 3.5;
+
+// 2. Dijkstra's Algorithm
+class PriorityQueue {
+    constructor() {
+        this.elements = [];
+        this.length = 0;
+    }
+    push(data) {
+        this.elements.push(data);
+        this.length++;
+        this.upHeapify(this.length - 1);
+    }
+    pop() {
+        this.swap(0, this.length - 1);
+        const popped = this.elements.pop();
+        this.length--;
+        this.downheapify(0);
+        return popped;
     }
 
-    for (let i=0; i<elements.length; i++) {
-        setTimeout(() => {
-            elements[i].classList.remove('visited');
-            elements[i].classList.add(className);
-            if(i === elements.length-1 && className === 'visited') {
-                animate(pathToAnimate, 'path');
-            }
-        }, delay*i);
+    upHeapify(i) {
+        if (i === 0) return;
+        const parent = Math.floor((i - 1) / 2);
+        if (this.elements[i].cost < this.elements[parent].cost) {
+            this.swap(parent, i);
+            this.upHeapify(parent);
+        }
     }
+
+    downheapify(i) {
+        let minNode = i;
+        const leftChild = (2 * i) + 1;
+        const rightChild = (2 * i) + 2;
+
+        if (leftChild < this.length && this.elements[leftChild].cost < this.elements[minNode].cost) {
+            minNode = leftChild;
+        }
+        if (rightChild < this.length && this.elements[rightChild].cost < this.elements[minNode].cost) {
+            minNode = rightChild;
+        }
+
+        if (minNode !== i) {
+            this.swap(minNode, i);
+            this.downheapify(minNode);
+        }
+    }
+
+    isEmpty() {
+        return this.length === 0;
+    }
+
+    swap(x, y) {
+        [this.elements[x], this.elements[y]] = [this.elements[y], this.elements[x]];
+    }
+
 };
 
+function Dijkstra() {
+    const pq = new PriorityQueue();
+    const parent = new Map();
+    const distance = [];
 
-// Backtrack to get path from source to target
-function getPath(parent, target) {
-    if(!target) return;
+    for (let i = 0; i < row; i++) {
+        const INF = [];
+        for (let j = 0; j < col; j++) {
+            INF.push(Infinity);
+        }
+        distance.push(INF);
+    }
 
-    pathToAnimate.push(matrix[target.x][target.y]);
+    distance[source.x][source.y] = 0;
+    pq.push({ cordinate: source, cost: 0 });
 
-    const p = parent.get(`${target.x}-${target.y}`);
-    getPath(parent,p);
+    while (!pq.isEmpty()) {
+        const { cordinate: current, cost: distanceSoFar } = pq.pop();
+        visitedCell.push(matrix[current.x][current.y]);
+
+        const neighbours = [
+            {x: current.x-1, y: current.y}, // Up
+            {x: current.x, y: current.y+1}, // Right
+            {x: current.x+1, y: current.y}, // Bottom
+            {x: current.x, y: current.y-1} // Left
+        ];
+
+        for (const neighbour of neighbours) {
+            const key = `${neighbour.x}-${neighbour.y}`;
+
+            if (isValid(neighbour.x, neighbour.y) &&
+                !matrix[neighbour.x][neighbour.y].classList.contains('wall')
+            ) {
+                //Assuming edge weight = 1, between adjacent vertices
+                const edgeWeight = 1;
+                const distanceToNeighbour = distanceSoFar + edgeWeight;
+
+                if (distanceToNeighbour < distance[neighbour.x][neighbour.y]) {
+                    distance[neighbour.x][neighbour.y] = distanceToNeighbour;
+                    pq.push({ cordinate: neighbour, cost: distanceToNeighbour });
+                    parent.set(key, current);
+                }
+            }
+        }
+    }
+
+    getPath(parent, target);
 };
