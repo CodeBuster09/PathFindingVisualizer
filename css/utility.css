@@ -19,7 +19,7 @@ span.carret {
 }
 
 .wall {
-    background-color: var(--clr-navy);
+    background-color: var(--wall-clr);
     animation: wallAnimation 0.5s ease-out forwards;
 }
 
@@ -29,10 +29,12 @@ span.carret {
 }
 
 .visited {
+    background-color: var(--visited-clr);
     animation: visitedAnimation 1s ease-out forwards;
 }
 
 .path {
+    background-color: var(--path-clr);
     animation: pathAnimation 1s ease-out forwards;
 }
 
@@ -65,4 +67,9 @@ span.carret {
 
 .target {
     background-image: url('../assets/icon/target.svg');
+}
+
+.icon {
+    aspect-ratio: 1;
+    width: 20px;
 }

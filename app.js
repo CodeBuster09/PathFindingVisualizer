@@ -69,7 +69,7 @@ navOptions.forEach(navOption => {
 });
 
 let pixelSize = 22;
-let speed = 'normal';
+let speed = 'Normal';
 let algorithm = 'BFS';
 const visualizeBtn = document.getElementById('visualize');
 
@@ -325,6 +325,17 @@ function generateMaze(rowStart, rowEnd, colStart, colEnd, surroundingWall, orien
 //Animate algorithm
 function animate(elements, className) {
     let delay = 10;
+    if(speed === 'Slow') {
+        delay = 20;
+    } else if(speed === 'Normal') {
+        delay = 10;
+    } else {
+        delay = 5;
+    }
+    
+    console.log(speed)
+    console.log(delay)
+
     if(className === 'path') {
         delay *= 3.5;
     }
