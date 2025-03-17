@@ -37,6 +37,8 @@ function renderBoard(cellWidth = 22) {
 
     source = set('source');
     target = set('target');
+
+    boardInteraction(cells);
 }
 
 const navOptions = document.querySelectorAll('.nav-menu>li>a');
@@ -121,58 +123,61 @@ function set(className, x, y) {
 } 
 
 
-let isDrawing = false;
-let isDragging = false;
-let dragPoint = null;
-cells.forEach((cell) => {
+function boardInteraction() {
+    let isDrawing = false;
+    let isDragging = false;
+    let dragPoint = null;
+    cells.forEach((cell) => {
 
-    const pointerup = ()=>{
-        isDragging = false;
-        isDrawing = false;
-        dragPoint = null;
-    }
-
-    const pointerdown = (e)=> {
-        if(e.target.classList.contains('source')) {
-            isDragging = true;
-            dragPoint = 'source';
-        } else if(e.target.classList.contains('target')) {
-            isDragging = true;
-            dragPoint = 'target';
-        } else {
-            isDrawing = true;
+        const pointerup = ()=>{
+            isDragging = false;
+            isDrawing = false;
+            dragPoint = null;
         }
-    }
 
-    const pointermove = (e)=>{
-        if(isDrawing) {
-            e.target.classList.add('wall');
-        } else if(dragPoint && isDragging){
-
-            cells.forEach((cell) => {
-                cell.classList.remove(`${dragPoint}`);
-            });
-
-            e.target.classList.add(`${dragPoint}`);
-            let coordinate = e.target.id.split('-');
-            if(dragPoint === 'source') {
-                source.x = +coordinate[0];
-                source.y = +coordinate[1];
+        const pointerdown = (e)=> {
+            if(e.target.classList.contains('source')) {
+                isDragging = true;
+                dragPoint = 'source';
+            } else if(e.target.classList.contains('target')) {
+                isDragging = true;
+                dragPoint = 'target';
             } else {
-                target.x = +coordinate[0];
-                target.y = +coordinate[1];
-            
+                isDrawing = true;
             }
         }
-    }
 
-    cell.addEventListener('pointerup',pointerup);
-    cell.addEventListener('pointerdown',pointerdown);
-    cell.addEventListener('pointermove',pointermove);
-    cell.addEventListener('click', ()=> {
-        cell.classList.toggle('wall');
+        const pointermove = (e)=>{
+            if(isDrawing) {
+                e.target.classList.add('wall');
+            } else if(dragPoint && isDragging){
+
+                cells.forEach((cell) => {
+                    cell.classList.remove(`${dragPoint}`);
+                });
+
+                e.target.classList.add(`${dragPoint}`);
+                let coordinate = e.target.id.split('-');
+                if(dragPoint === 'source') {
+                    source.x = +coordinate[0];
+                    source.y = +coordinate[1];
+                } else {
+                    target.x = +coordinate[0];
+                    target.y = +coordinate[1];
+                
+                }
+            }
+        }
+
+        cell.addEventListener('pointerup',pointerup);
+        cell.addEventListener('pointerdown',pointerdown);
+        cell.addEventListener('pointermove',pointermove);
+        cell.addEventListener('click', ()=> {
+            cell.classList.toggle('wall');
+        });
     });
-});
+
+}
 
 const clearPathBtn = document.getElementById('clear-path');
 const clearBoardBtn = document.getElementById('clear-board');
@@ -328,7 +333,6 @@ function animate(elements, className) {
         setTimeout(() => {
             elements[i].classList.remove('visited');
             elements[i].classList.add(className);
-     
             if(i === elements.length-1 && className === 'visited') {
                 animate(pathToAnimate, 'path');
             }
@@ -354,11 +358,28 @@ function getPath(parent, target) {
 // 1. BFS
 var visitedCell;
 var pathToAnimate;
+
 visualizeBtn.addEventListener('click', ()=>{
+    clearPath();
     visitedCell = [];
     pathToAnimate = [];
-    // BFS();
-    Dijkstra();
+    
+    switch (algorithm) {
+        case "BFS" :
+            BFS();
+            break;
+        
+        case "DFS" :
+            if(DFS(source)) pathToAnimate.push(matrix[source.x][source.y]);
+            break;
+        
+        case "Dijkstra's" :
+            Dijkstra();
+            break;
+        
+            default:
+                break;
+    }
     animate(visitedCell, 'visited');
 });
 
@@ -505,3 +526,37 @@ function Dijkstra() {
 
     getPath(parent, target);
 };
+
+
+// 3. DFS
+const visited = new Set();
+function DFS(current) {
+    //base case
+    if (current.x === target.x && current.y === target.y) {
+        return true;
+    }
+
+    visitedCell.push(matrix[current.x][current.y]);
+    visited.add(`${current.x}-${current.y}`);
+
+    const neighbours = [
+        {x: current.x-1, y: current.y}, // Up
+        {x: current.x, y: current.y+1}, // Right
+        {x: current.x+1, y: current.y}, // Bottom
+        {x: current.x, y: current.y-1} // Left
+    ];
+
+    for (const neighbour of neighbours) {
+        if (isValid(neighbour.x, neighbour.y) &&
+            !visited.has(`${neighbour.x}-${neighbour.y}`) &&
+            !matrix[neighbour.x][neighbour.y].classList.contains('wall')) {
+            if (DFS(neighbour)) {
+                pathToAnimate.push(matrix[neighbour.x][neighbour.y]);
+                return true;
+            }
+
+        }
+    }
+
+    return false;
+}
